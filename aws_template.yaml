@@ -235,6 +235,7 @@ Resources:
             systemctl enable httpd
             git clone https://github.com/mariandrean/aws_yellow_project.git
             cd aws_yellow_project/web
+            echo "const ip='$(hostname -f)'" > /var/www/html/script.js
             sudo mv index.html styles.css /var/www/html/
 
   WebServerGroup:
