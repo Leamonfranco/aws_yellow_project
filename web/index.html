@@ -182,8 +182,14 @@
 	</main>
 
 	<script>
-		let d = new Date();
-		document.getElementById("hostname").innerHTML = "<div>🔥 EC2 response: " + location.hostname + "</div>"
+		fetch('https://checkip.amazonaws.com')
+            		.then(response => response.text())
+            		.then(data => {
+               			 document.getElementById('ip').innerHTML = '🔥 IP Pública: ' + data;
+            	}).catch(error => {
+                	console.error('Error obteniendo la IP:', error);
+                	document.getElementById('ip').innerHTML = 'Error al obtener la IP';
+            	});
 	</script>
 </body>
 
