@@ -1,0 +1,268 @@
+AWSTemplateFormatVersion: 2010-09-09
+Parameters:
+
+  InstanceType:
+    Description: The EC2 instance type
+    Type: String
+    Default: t3.micro
+
+  KeyName:
+    Description: Name of an existing EC2 key pair to allow SSH access to the instances
+    Type: 'AWS::EC2::KeyPair::KeyName'
+
+  LatestAmiId:
+    Description: The latest Amazon Linux 2 AMI from the Parameter Store
+    Type: 'AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>'
+    Default: '/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2'
+
+  OperatorEmail:
+    Description: The email address to notify when there are any scaling activities
+    Type: String
+  
+  PublicSubnetCidr1:
+    Description: The first Cidr Subnet
+    Type: String
+    Default: 10.0.1.0/24
+  
+  PublicSubnetCidr2:
+    Description: The second Cidr Subnet
+    Type: String
+    Default: 10.0.2.0/24
+
+  LabVpcCidr:
+    Type: String
+    Default: 10.0.0.0/16
+  
+  AvailabilityZone1:
+    Description: The first Availability Zone to use
+    Type: String
+    Default: us-west-2a
+  
+  AvailabilityZone2:
+    Description: The second Availability Zone to use
+    Type: String
+    Default: us-west-2b
+
+Resources:
+
+  ###########
+  # VPC with Internet Gateway
+  ###########
+
+  LabVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: !Ref LabVpcCidr
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: Lab VPC
+  
+  IGW:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: Lab IGW
+  
+  VPCtoIGWConnection:
+    Type: AWS::EC2::VPCGatewayAttachment
+    DependsOn:
+      - IGW
+      - LabVPC
+    Properties:
+      InternetGatewayId: !Ref IGW
+      VpcId: !Ref LabVPC
+  
+  ###########
+  # Public Route Table
+  ###########
+
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    DependsOn: LabVPC
+    Properties:
+      VpcId: !Ref LabVPC
+      Tags:
+        - Key: Name
+          Value: Public Route Table
+  
+  PublicRoute:
+    Type: AWS::EC2::Route
+    DependsOn:
+      - PublicRouteTable
+      - IGW
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref IGW
+      RouteTableId: !Ref PublicRouteTable
+
+  ###########
+  # Public Subnets
+  ###########
+
+  PublicSubnet1:
+    Type: AWS::EC2::Subnet
+    DependsOn: LabVPC
+    Properties:
+      VpcId: !Ref LabVPC
+      MapPublicIpOnLaunch: true
+      CidrBlock: !Ref PublicSubnetCidr1
+      AvailabilityZone: !Ref AvailabilityZone1
+      Tags:
+        - Key: Name
+          Value: Public Subnet1
+  
+  PublicSubnet2:
+    Type: AWS::EC2::Subnet
+    DependsOn: LabVPC
+    Properties:
+      VpcId: !Ref LabVPC
+      MapPublicIpOnLaunch: true
+      CidrBlock: !Ref PublicSubnetCidr2
+      AvailabilityZone: !Ref AvailabilityZone2
+      Tags:
+        - Key: Name
+          Value: Public Subnet2
+
+  PublicRouteTableAssociation1:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    DependsOn:
+      - PublicRouteTable
+      - PublicSubnet1
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      SubnetId: !Ref PublicSubnet1
+  
+  PublicRouteTableAssociation2:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    DependsOn:
+      - PublicRouteTable
+      - PublicSubnet2
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      SubnetId: !Ref PublicSubnet2
+
+  ###########
+  # Application Load Balancer
+  ###########
+
+  ELBSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: ELB Security Group
+      VpcId: !Ref LabVPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        
+  EC2SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: EC2 Security Group
+      VpcId: !Ref LabVPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          SourceSecurityGroupId:
+            Fn::GetAtt:
+            - ELBSecurityGroup
+            - GroupId
+            
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          SourceSecurityGroupId:
+            Fn::GetAtt:
+            - ELBSecurityGroup
+            - GroupId
+          CidrBlock: 0.0.0.0/0
+
+  EC2TargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      HealthCheckIntervalSeconds: 30
+      HealthCheckProtocol: HTTP
+      HealthCheckTimeoutSeconds: 15
+      HealthyThresholdCount: 5
+      Matcher:
+        HttpCode: '200'
+      Name: EC2TargetGroup
+      Port: 80
+      Protocol: HTTP
+      VpcId: !Ref LabVPC
+
+  ApplicationLoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Scheme: internet-facing
+      Subnets: 
+        - !Ref PublicSubnet1
+        - !Ref PublicSubnet2
+      SecurityGroups:
+        - !GetAtt ELBSecurityGroup.GroupId
+
+  ALBListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref EC2TargetGroup
+      LoadBalancerArn: !Ref ApplicationLoadBalancer
+      Port: 80
+      Protocol: HTTP
+
+  ###########
+  # Auto Scaling Group
+  ###########
+
+  LaunchTemplate:
+    Type: AWS::EC2::LaunchTemplate
+    Properties: 
+      LaunchTemplateName: !Sub ${AWS::StackName}-launch-template
+      LaunchTemplateData:
+        ImageId: !Ref LatestAmiId
+        InstanceType: !Ref InstanceType
+        KeyName: !Ref KeyName
+        SecurityGroupIds: 
+          - !Ref EC2SecurityGroup
+        UserData:
+          Fn::Base64: !Sub |
+            #!/bin/bash
+            yum update -y
+            yum install -y httpd
+            systemctl start httpd
+            systemctl enable httpd
+            echo "<html>
+            <body>
+            <h1>Welcome to the Auto Scaling Demo!</h1>
+            <div>EC2 response: $(hostname -f)</div>
+            </body>
+            </html>" > /var/www/html/index.html
+
+  WebServerGroup:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      LaunchTemplate:
+        LaunchTemplateId: !Ref LaunchTemplate
+        Version: !GetAtt LaunchTemplate.LatestVersionNumber
+      MaxSize: '4'
+      MinSize: '2'
+      TargetGroupARNs:
+        - !Ref EC2TargetGroup
+      VPCZoneIdentifier: 
+        - !Ref PublicSubnet1
+        - !Ref PublicSubnet2
+
+###########
+# Outputs
+###########
+
+Outputs:
+  LoadBalancerDNS:
+    Description: DNS Name of the load balancer
+    Value: !GetAtt ApplicationLoadBalancer.DNSName
