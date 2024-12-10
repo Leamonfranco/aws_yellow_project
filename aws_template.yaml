@@ -166,21 +166,16 @@ Resources:
       VpcId: !Ref LabVPC
       SecurityGroupIngress:
         - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
           FromPort: 80
           ToPort: 80
           SourceSecurityGroupId:
             Fn::GetAtt:
             - ELBSecurityGroup
             - GroupId
-            
-        - IpProtocol: tcp
-          FromPort: 22
-          ToPort: 22
-          SourceSecurityGroupId:
-            Fn::GetAtt:
-            - ELBSecurityGroup
-            - GroupId
-          CidrBlock: 0.0.0.0/0
 
   EC2TargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
@@ -234,15 +229,13 @@ Resources:
           Fn::Base64: !Sub |
             #!/bin/bash
             yum update -y
-            yum install -y httpd
+            sudo amazon-linux-extras install epel -yinternal: -y
+            yum install -y httpd git stress
             systemctl start httpd
             systemctl enable httpd
-            echo "<html>
-            <body>
-            <h1>Welcome to the Auto Scaling Demo!</h1>
-            <div>EC2 response: $(hostname -f)</div>
-            </body>
-            </html>" > /var/www/html/index.html
+            git clone https://github.com/mariandrean/aws_yellow_project.git
+            cd aws_yellow_project/web
+            sudo mv index.html styles.css /var/www/html/
 
   WebServerGroup:
     Type: AWS::AutoScaling::AutoScalingGroup
@@ -257,6 +250,41 @@ Resources:
       VPCZoneIdentifier: 
         - !Ref PublicSubnet1
         - !Ref PublicSubnet2
+  
+  ScalingPolicy:
+    Type: 'AWS::AutoScaling::ScalingPolicy'
+    Properties:
+      AdjustmentType: ChangeInCapacity
+      AutoScalingGroupName: !Ref WebServerGroup
+      ScalingAdjustment: '1'
+
+  NotificationTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      DisplayName: Auto Scaling Notifications
+      Subscription:
+        - Protocol: email
+          Endpoint: !Ref OperatorEmail
+
+  
+  CloudWatchAlarm:
+    Type: 'AWS::CloudWatch::Alarm'
+    Properties:
+      EvaluationPeriods: '1'
+      Statistic: Average
+      Threshold: '50'
+      AlarmDescription: Alarm set fo 50% of CPU utilization 
+      Period: '60'
+      AlarmActions:
+        - !Ref NotificationTopic
+        - !Ref ScalingPolicy
+      Namespace: AWS/EC2
+      Dimensions:
+        - Name: AutoScalingGroupName
+          Value:
+            Ref: WebServerGroup
+      ComparisonOperator: GreaterThanThreshold
+      MetricName: CPUUtilization
 
 ###########
 # Outputs
