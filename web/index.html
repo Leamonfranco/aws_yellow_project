@@ -1,0 +1,126 @@
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>AWS - Yellow Project</title>
+	<link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+	<header>
+		<p id="hostname"></p>
+		<h1>Hola 👋 somos el equipo amarillo. </h1>
+		<h2>¡Bienvenidos a Nuestro Proyecto Final! 🚀</h2>
+	</header>
+
+	<main>
+		<section class="team">
+
+			<article>
+				<a href="images/foto_lea.png">
+					<img class="profile-picture" src="images/foto_lea.png" alt="Foto de Lea">
+				</a>
+				<h5 class="profile-name">Leandra Montoya Franco</h5>
+
+				<div class="profile-links">
+					<a href="https://github.com/Leamonfranco">Github</a>
+					<a href="https://www.linkedin.com/in/leandramontoya/">LinkedIn</a>
+				</div>
+			</article>
+
+			<article>
+				<a href="images/foto_triana.png">
+					<img class="profile-picture" src="images/foto_triana.png" alt="Foto de Triana">
+				</a>
+				<h5 class="profile-name">Triana Soler Martín</h5>
+
+				<div class="profile-links">
+					<a href="https://github.com/TrianaSolerMartin">Github</a>
+					<a href="www.linkedin.com/in/triana-soler-martín">LinkedIn</a>
+				</div>
+			</article>
+
+			<article>
+				<a href="images/foto_maria.png">
+					<img class="profile-picture" src="images/foto_maria.png" alt="Foto de Maria">
+				</a>
+				<h5 class="profile-name">Maria Andrea An</h5>
+
+				<div class="profile-links">
+					<a href="https://github.com/mariandrean">Github</a>
+					<a href="https://www.linkedin.com/in/mariandrean">LinkedIn</a>
+				</div>
+			</article>
+
+			<article>
+				<a href="images/foto_scarlet.png">
+					<img class="profile-picture" src="images/foto_scarlet.png" alt="Foto de Scarlet">
+				</a>
+				<h5 class="profile-name">Scarlet Gonzalez García</h5>
+
+				<div class="profile-links">
+					<a href="https://github.com/Scarlat2902/Scarlat2902">Github</a>
+					<a href="https://www.linkedin.com/in/scarlet-gonzalez-garcia/">LinkedIn</a>
+				</div>
+			</article>
+
+			<article>
+				<a href="images/foto_sandra.jpg">
+					<img class="profile-picture" src="images/foto_sandra.jpg" alt="Foto de Maria">
+				</a>
+				<h5 class="profile-name">Sandra Esteban López</h5>
+
+				<div class="profile-links">
+					<a href="https://github.com/sandraEstlo">Github</a>
+					<a href="https://www.linkedin.com/in/sandra-esteban-lopez/">LinkedIn</a>
+				</div>
+			</article>
+		</section>
+		<section class="project-description">
+			<h2>Nuestro Proyecto</h2>
+			<p>Despliegue de una aplicación
+				web con alta disponibilidad en AWS garantizando que permanezca
+				accesible incluso si una zona de disponibilidad de AWS falla.</p>
+			<h3>Objetivos Principales</h3>
+			<ul>
+				<li>Implementar alta disponibilidad mediante múltiples zonas de disponibilidad</li>
+				<li>Asegurar el acceso a la web exclusivamente a través del balanceador de carga</li>
+				<li>Mantener la continuidad del servicio ante fallos de instancias</li>
+				<li>Implementar escalado automático basado en la demanda</li>
+				<li>Desarrollar competencias técnicas en todo el equipo</li>
+			</ul>
+			<h3>Resultados Esperados</h3>
+			<ul>
+				<li>Diseño e implementación de arquitectura cloud robusta</li>
+				<li>Distribución de carga efectiva entre múltiples instancias</li>
+				<li>Sistema de auto-escalado funcional</li>
+				<li>Equipo capacitado para mantener y explicar la infraestructura</li>
+			</ul>
+			<h3>Arquitectura del proyecto</h3>
+
+			<a href="images/diagram.jpg"><img class="diagram" src="images/diagram.jpg" /></a>
+
+			<h3>Tecnologías Utilizadas</h3>
+			<ul>
+				<li>EC2, Balanceador de carga, Grupos de seguridad</li>
+				<li>Github, HTML, CSS, Javascript</li>
+			</ul>
+			<h3>Competencias Desarrolladas</h3>
+			<ul>
+				<li>Desarrollo y despliegue de web estática</li>
+				<li>Configuración de servidores web en instancias EC2</li>
+				<li>Implementación de sistemas de auto-escalado</li>
+				<li>Gestión de balanceadores de carga</li>
+				<li>Configuración de seguridad en la nube</li>
+			</ul>
+		</section>
+	</main>
+
+	<script>
+		let d = new Date();
+		document.getElementById("hostname").innerHTML = "<div>🔥 EC2 response: " + location.hostname + "</div>"
+	</script>
+</body>
+
+</html>
