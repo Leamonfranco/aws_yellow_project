@@ -1,6 +1,13 @@
-## Realización del proyectos y configuraciones
+## Contenido
++ [Descripción del Proyecto](#descripción-del-proyecto)
++ [Servicios utilizados](#servicios-utilizados)
++ [Arquitectura](#arquitectura)
++ [Configuraciones](#configuraciones)
++ [Integrantes del Equipo](#integrantes-del-equipo)
+
+## Descripción del Proyecto
 Realización del despliegue de una aplicación web con alta disponibilidad en AWS. El objetivo principal es garantizar que la web del cliente permanezca accesible incluso si una zona de disponibilidad de AWS falla.
-#### Servicios utilizados
+## Servicios utilizados
 - Cloud Formation
 - Amazon VPC (Virtual Private Cloud)
 - Internet Gateway (IGW)
@@ -12,8 +19,10 @@ Realización del despliegue de una aplicación web con alta disponibilidad en AW
 - Cloud Watch
 - SNS (Simple Notification Service)
 - EC2 (Elastic Compute Cloud)
-#### Arquitectura
+## Arquitectura
 <img src="web/images/diagram.jpg" alt="Diagrama de la Arquitectura del Proyecto">
+
+## Configuraciones
 
 ### 1. Configuración de la VPC y de Internet Getawey
 Se configura una VPC (Virtual Private Cloud) que define una red virtual para el proyecto. Se especifica el rango de direcciones IP (`10.0.0.0/16`) y se habilita soporte DNS para resolver nombres en la red.
@@ -348,3 +357,78 @@ Outputs:
 		Description: DNS Name of the load balancer 
 		Value: !GetAtt ApplicationLoadBalancer.DNSName
 ```
+
+<!-- TEAM -->
+## Integrantes del Equipo
+
+<table align='center'>
+  <tr>
+  <td align='center'>
+      <div >
+        <h4 style="margin-top: 1rem;">Leandra Montoya Franco</h4>
+        <div style='display: flex; flex-direction: column'>
+        <a href="https://github.com/Leamonfranco" target="_blank">
+          <img style='width:7rem' src="https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white"/>
+        </a>
+        <a href="https://www.linkedin.com/in/leandramontoya/" target="_blank">
+          <img style='width:7rem' src="https://img.shields.io/badge/linkedin%20-%230077B5.svg?&style=for-the-badge&logo=linkedin&logoColor=white"/>
+        </a>
+        </div>
+      </div>
+    </td>
+    <td align='center'>
+      <div >
+        <h4 style="margin-top: 1rem;">Triana Soler Martín</h4>
+        <div style='display: flex; flex-direction: column'>
+        <a href="https://github.com/TrianaSolerMartin" target="_blank">
+          <img style='width:7rem' src="https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white"/>
+        </a>
+        <a href="https://www.linkedin.com/in/triana-soler-martín" target="_blank">
+          <img style='width:7rem' src="https://img.shields.io/badge/linkedin%20-%230077B5.svg?&style=for-the-badge&logo=linkedin&logoColor=white"/>
+        </a>
+        </div>
+      </div>
+    </td>
+    <td align='center'>
+      <div >
+        <h4 style="margin-top: 1rem;">Scarlet Gonzalez García</h4>
+        <div style='display: flex; flex-direction: column'>
+        <a href="https://github.com/Scarlat2902/Scarlat2902" target="_blank">
+          <img style='width:7rem' src="https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white"/>
+        </a>
+        <a href="https://www.linkedin.com/in/scarlet-gonzalez-garcia/" target="_blank">
+          <img style='width:7rem' src="https://img.shields.io/badge/linkedin%20-%230077B5.svg?&style=for-the-badge&logo=linkedin&logoColor=white"/>
+        </a>
+        </div>
+      </div>
+    </td>
+    <td align='center'>
+      <div >
+        <h4 style="margin-top: 1rem;">Sandra Esteban López</h4>
+        <div style='display: flex; flex-direction: column'>
+        <a href="https://github.com/sandraEstlo" target="_blank">
+          <img style='width:7rem' src="https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white"/>
+        </a>
+        <a href="https://www.linkedin.com/in/sandra-esteban-lopez/" target="_blank">
+          <img style='width:7rem' src="https://img.shields.io/badge/linkedin%20-%230077B5.svg?&style=for-the-badge&logo=linkedin&logoColor=white"/>
+        </a>
+        </div>
+      </div>
+    </td>
+    <td align='center'>
+      <div >
+        <h4 style="margin-top: 1rem;">Maria Andrea An</h4>
+        <div style='display: flex; flex-direction: column'>
+        <a href="https://github.com/mariandrean" target="_blank">
+          <img style='width:7rem' src="https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white"/>
+        </a>
+        <a href="https://www.linkedin.com/in/mariandrean/" target="_blank">
+          <img style='width:7rem' src="https://img.shields.io/badge/linkedin%20-%230077B5.svg?&style=for-the-badge&logo=linkedin&logoColor=white"/>
+        </a>
+        </div>
+      </div>
+    </td>
+  </tr>
+</table>
+</details>
+<!-- END OF TEAM -->
