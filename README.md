@@ -8,17 +8,18 @@
 ## Descripción del Proyecto
 Realización del despliegue de una aplicación web con alta disponibilidad en AWS. El objetivo principal es garantizar que la web del cliente permanezca accesible incluso si una zona de disponibilidad de AWS falla.
 ## Servicios utilizados
-- Cloud Formation
+- AWS CloudFormation
 - Amazon VPC (Virtual Private Cloud)
-- Internet Gateway (IGW)
-- Route Table (Tabla de Rutas)
-- Subnet (Subredes)
-- Security Groups
-- Elastic Load Balancing (ALB - Application Load Balancer)
-- Auto Scaling
-- Cloud Watch
-- SNS (Simple Notification Service)
-- EC2 (Elastic Compute Cloud)
+  	- Internet Gateway (IGW)
+	- Route Table (Tabla de Rutas)
+	- Subnet (Subredes)
+- Amazon EC2 (Elastic Compute Cloud)
+	- Security Groups 
+	- Elastic Load Balancing (ALB - Application Load Balancer)
+	- Auto Scaling
+- Amazon CloudWatch
+- Amazon SNS (Simple Notification Service)
+
 ## Arquitectura
 <img src="web/images/diagram.jpg" alt="Diagrama de la Arquitectura del Proyecto">
 
