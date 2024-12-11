@@ -90,9 +90,9 @@ PublicSubnet1:
 		MapPublicIpOnLaunch: true 
 		CidrBlock: !Ref PublicSubnetCidr1 
 		AvailabilityZone: !Ref AvailabilityZone1 
-	Tags: 
-		- Key: Name 
-		  Value: Public Subnet1
+		Tags: 
+			- Key: Name 
+			  Value: Public Subnet1
 
 PublicSubnet2: 
 	Type: AWS::EC2::Subnet 
@@ -102,9 +102,9 @@ PublicSubnet2:
 		MapPublicIpOnLaunch: true 
 		CidrBlock: !Ref PublicSubnetCidr2 
 		AvailabilityZone: !Ref AvailabilityZone2 
-	Tags: 
-		- Key: Name 
-		  Value: Public Subnet2
+		Tags: 
+			- Key: Name 
+			  Value: Public Subnet2
 ```
 
 Además, las subredes se asocian a la tabla de rutas pública para que puedan utilizar el Internet Gateway.
@@ -118,14 +118,14 @@ PublicRouteTableAssociation1:
 		RouteTableId: !Ref 
 		PublicRouteTable SubnetId: !Ref PublicSubnet1 
 
-	PublicRouteTableAssociation2: 
-		Type: AWS::EC2::SubnetRouteTableAssociation 
-		DependsOn: 
-			- PublicRouteTable 
-			- PublicSubnet2 
-		Properties: 
-			RouteTableId: !Ref PublicRouteTable 
-			SubnetId: !Ref PublicSubnet2
+PublicRouteTableAssociation2: 
+	Type: AWS::EC2::SubnetRouteTableAssociation 
+	DependsOn: 
+		- PublicRouteTable 
+		- PublicSubnet2 
+	Properties: 
+		RouteTableId: !Ref PublicRouteTable 
+		SubnetId: !Ref PublicSubnet2
 ```
 
 ### 6. Configuración de los grupos de seguridad
@@ -160,8 +160,8 @@ EC2SecurityGroup:
 			- IpProtocol: tcp 
 			  FromPort: 80 
 			  ToPort: 80 
-		SourceSecurityGroupId: 
-			Fn::GetAtt: 
+			  SourceSecurityGroupId: 
+				Fn::GetAtt: 
 				- ELBSecurityGroup 
 				- GroupId
 ```
@@ -243,7 +243,9 @@ LaunchTemplate:
 					yum install -y httpd git stress 
 					systemctl start httpd 
 					systemctl enable httpd 
-					git clone https://github.com/mariandrean/aws_yellow_project.git cd aws_yellow_project/web 
+					git clone https://github.com/mariandrean/aws_yellow_project.git
+					cd aws_yellow_project/web
+					echo "const ip='$(hostname -f)'" > /var/www/html/script.js
 					sudo mv index.html styles.css /var/www/html/
 ```
 
@@ -255,13 +257,13 @@ WebServerGroup:
 		LaunchTemplate: 
 			LaunchTemplateId: !Ref 
 			LaunchTemplate Version: !GetAtt LaunchTemplate.LatestVersionNumber 
-			MaxSize: '4' 
-			MinSize: '2' 
-			TargetGroupARNs: 
-				- !Ref EC2TargetGroup 
-			VPCZoneIdentifier: 
-				- !Ref PublicSubnet1 
-				- !Ref PublicSubnet2
+		MaxSize: '4' 
+		MinSize: '2' 
+		TargetGroupARNs: 
+			- !Ref EC2TargetGroup 
+		VPCZoneIdentifier: 
+			- !Ref PublicSubnet1 
+			- !Ref PublicSubnet2
 ```
 
 **Políticas de escalado:**  Reglas configuradas para realizar el autoescalado de manera automática.
