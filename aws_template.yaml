@@ -252,13 +252,58 @@ Resources:
         - !Ref PublicSubnet1
         - !Ref PublicSubnet2
   
-  ScalingPolicy:
+  ScalingOutPolicy:
     Type: 'AWS::AutoScaling::ScalingPolicy'
     Properties:
       AdjustmentType: ChangeInCapacity
       AutoScalingGroupName: !Ref WebServerGroup
+      Cooldown: '300'
       ScalingAdjustment: '1'
+  
+  CloudWatchOutAlarm:
+    Type: 'AWS::CloudWatch::Alarm'
+    Properties:
+      EvaluationPeriods: '1'
+      Statistic: Average
+      Threshold: '70'
+      AlarmDescription: Alarm set fo 70% of CPU utilization 
+      Period: '300'
+      AlarmActions:
+        - !Ref ScalingOutPolicy  
+        - !Ref NotificationTopic
+      Namespace: AWS/EC2
+      Dimensions:
+        - Name: AutoScalingGroupName
+          Value: !Ref WebServerGroup
+      ComparisonOperator: GreaterThanThreshold
+      MetricName: CPUUtilization
 
+  ScalingInPolicy:
+    Type: 'AWS::AutoScaling::ScalingPolicy'
+    Properties:
+      AdjustmentType: ChangeInCapacity
+      AutoScalingGroupName: !Ref WebServerGroup
+      Cooldown: '300'
+      ScalingAdjustment: '-1'
+  
+  CloudWatchInAlarm:
+    Type: 'AWS::CloudWatch::Alarm'
+    Properties:
+      EvaluationPeriods: '1'
+      Statistic: Average
+      Threshold: '40'
+      AlarmDescription: Alarm set for CPU utilization <= 40%
+      Period: '300'
+      AlarmActions:
+        - !Ref ScalingInPolicy  
+        - !Ref NotificationTopic
+      Namespace: AWS/EC2
+      Dimensions:
+        - Name: AutoScalingGroupName  
+          Value: !Ref WebServerGroup
+      ComparisonOperator: LessThanOrEqualToThreshold
+      MetricName: CPUUtilization
+  
   NotificationTopic:
     Type: AWS::SNS::Topic
     Properties:
@@ -266,26 +311,6 @@ Resources:
       Subscription:
         - Protocol: email
           Endpoint: !Ref OperatorEmail
-
-  
-  CloudWatchAlarm:
-    Type: 'AWS::CloudWatch::Alarm'
-    Properties:
-      EvaluationPeriods: '1'
-      Statistic: Average
-      Threshold: '50'
-      AlarmDescription: Alarm set fo 50% of CPU utilization 
-      Period: '60'
-      AlarmActions:
-        - !Ref NotificationTopic
-        - !Ref ScalingPolicy
-      Namespace: AWS/EC2
-      Dimensions:
-        - Name: AutoScalingGroupName
-          Value:
-            Ref: WebServerGroup
-      ComparisonOperator: GreaterThanThreshold
-      MetricName: CPUUtilization
 
 ###########
 # Outputs
