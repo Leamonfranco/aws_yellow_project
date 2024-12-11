@@ -21,7 +21,7 @@ Realización del despliegue de una aplicación web con alta disponibilidad en AW
 - Amazon SNS (Simple Notification Service)
 
 ## Arquitectura
-<img src="web/images/diagram.jpg" alt="Diagrama de la Arquitectura del Proyecto">
+<img src="./assets/scheme.png" alt="Diagrama de la Arquitectura del Proyecto">
 
 ## Configuraciones
 
@@ -358,6 +358,26 @@ Outputs:
 		Description: DNS Name of the load balancer 
 		Value: !GetAtt ApplicationLoadBalancer.DNSName
 ```
+<!-- TESTS -->
+#### Tests
+Una vez ya se define la pantilla y se crea como stack en CloudFormation:
+- Primero se comprueba las dos instancias creadas en nuestro Auto Scaling Group correctamente.
+<img src="./assets/ec2.png" alt="Instancias creadas desde la plantilla">
+
+- Luego se verifica el correcto funcionamiento del ALB.
+<img src="./assets/web.png" alt="Página Web">
+
+- Tal como se especificó en las políticas de Auto Scaling, se escalará cuando el consumo de la CPU supere el `70%`
+- Por lo que se procede a conectar con ambas instancias desde la terminal y a estresarlas mediante el comando `sudo stress --cpu 10 -v --timeout 400s`
+<img src="./assets/putty.png" alt="Terminal conectada a una de las instancias">
+<img src="./assets/image1.png" alt="Monitoreo CPU">
+
+- Se espera un tiempo para poder observar como se aprovisionan mas instancias para cubrir la demanda.
+- En el `Load Balancer` se puede obserbar como la carga se distribuye equitativamente en las instancias disponibles.
+<img src="./assets/image3.png" alt="Resource map">
+
+- Una vez se cancela la ejecución del `sudo stress --cpu 10 -v --timeout 400s` en la terminal, el consumo de la CPU disminuye por lo que las instancias adicionales se terminarán hasta llegar a las dos instancias inciales.
+<img src="./assets/EC2terminated.png" alt="Instancias terminandas">
 
 <!-- TEAM -->
 ## Integrantes del Equipo
