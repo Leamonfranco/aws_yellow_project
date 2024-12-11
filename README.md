@@ -1,4 +1,4 @@
-## Contenido
+## Índice
 + [Descripción del Proyecto](#descripción-del-proyecto)
 + [Servicios utilizados](#servicios-utilizados)
 + [Arquitectura](#arquitectura)
