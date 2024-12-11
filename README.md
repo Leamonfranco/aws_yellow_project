@@ -25,7 +25,7 @@ Realización del despliegue de una aplicación web con alta disponibilidad en AW
 
 ## Configuraciones
 
-### 1. Configuración de la VPC y de Internet Getawey
+### 1. Configuración de la VPC
 Se configura una VPC (Virtual Private Cloud) que define una red virtual para el proyecto. Se especifica el rango de direcciones IP (`10.0.0.0/16`) y se habilita soporte DNS para resolver nombres en la red.
 ``` 
 LabVPC: 
