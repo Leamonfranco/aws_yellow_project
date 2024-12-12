@@ -1,21 +1,31 @@
-## Realización del proyectos y configuraciones
-Realización del despliegue de una aplicación web con alta disponibilidad en AWS. El objetivo principal es garantizar que la web del cliente permanezca accesible incluso si una zona de disponibilidad de AWS falla.
-#### Servicios utilizados
-- Cloud Formation
-- Amazon VPC (Virtual Private Cloud)
-- Internet Gateway (IGW)
-- Route Table (Tabla de Rutas)
-- Subnet (Subredes)
-- Security Groups
-- Elastic Load Balancing (ALB - Application Load Balancer)
-- Auto Scaling
-- Cloud Watch
-- SNS (Simple Notification Service)
-- EC2 (Elastic Compute Cloud)
-#### Arquitectura
-<img src="web/images/diagram.jpg" alt="Diagrama de la Arquitectura del Proyecto">
+## Índice
++ [Descripción del Proyecto](#descripción-del-proyecto)
++ [Servicios utilizados](#servicios-utilizados)
++ [Arquitectura](#arquitectura)
++ [Configuraciones](#configuraciones)
++ [Integrantes del Equipo](#integrantes-del-equipo)
 
-### 1. Configuración de la VPC y de Internet Getawey
+## Descripción del Proyecto
+Realización del despliegue de una aplicación web con alta disponibilidad en AWS. El objetivo principal es garantizar que la web del cliente permanezca accesible incluso si una zona de disponibilidad de AWS falla.
+## Servicios utilizados
+- AWS CloudFormation
+- Amazon VPC (Virtual Private Cloud)
+  	- Internet Gateway (IGW)
+	- Route Table (Tabla de Rutas)
+	- Subnet (Subredes)
+- Amazon EC2 (Elastic Compute Cloud)
+	- Security Groups 
+	- Elastic Load Balancing (ALB - Application Load Balancer)
+	- Auto Scaling
+- Amazon CloudWatch
+- Amazon SNS (Simple Notification Service)
+
+## Arquitectura
+<img src="./assets/scheme.png" alt="Diagrama de la Arquitectura del Proyecto">
+
+## Configuraciones
+
+### 1. Configuración de la VPC
 Se configura una VPC (Virtual Private Cloud) que define una red virtual para el proyecto. Se especifica el rango de direcciones IP (`10.0.0.0/16`) y se habilita soporte DNS para resolver nombres en la red.
 ``` 
 LabVPC: 
@@ -348,3 +358,98 @@ Outputs:
 		Description: DNS Name of the load balancer 
 		Value: !GetAtt ApplicationLoadBalancer.DNSName
 ```
+<!-- TESTS -->
+#### Tests
+Una vez ya se define la pantilla y se crea como stack en CloudFormation:
+- Primero se comprueba las dos instancias creadas en nuestro Auto Scaling Group correctamente.
+<img src="./assets/ec2.png" alt="Instancias creadas desde la plantilla">
+
+- Luego se verifica el correcto funcionamiento del ALB.
+<img src="./assets/web.png" alt="Página Web">
+
+- Tal como se especificó en las políticas de Auto Scaling, se escalará cuando el consumo de la CPU supere el `70%`
+- Por lo que se procede a conectar con ambas instancias desde la terminal y a estresarlas mediante el comando `sudo stress --cpu 10 -v --timeout 400s`
+<img src="./assets/putty.png" alt="Terminal conectada a una de las instancias">
+<img src="./assets/image1.png" alt="Monitoreo CPU">
+
+- Se espera un tiempo para poder observar como se aprovisionan mas instancias para cubrir la demanda.
+- En el `Load Balancer` se puede obserbar como la carga se distribuye equitativamente en las instancias disponibles.
+<img src="./assets/image3.png" alt="Resource map">
+
+- Una vez se cancela la ejecución del `sudo stress --cpu 10 -v --timeout 400s` en la terminal, el consumo de la CPU disminuye por lo que las instancias adicionales se terminarán hasta llegar a las dos instancias inciales.
+<img src="./assets/EC2terminated.png" alt="Instancias terminandas">
+
+<!-- TEAM -->
+## Integrantes del Equipo
+
+<table align='center'>
+  <tr>
+  <td align='center'>
+      <div >
+        <h4 style="margin-top: 1rem;">Leandra Montoya Franco</h4>
+        <div style='display: flex; flex-direction: column'>
+        <a href="https://github.com/Leamonfranco" target="_blank">
+          <img style='width:7rem' src="https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white"/>
+        </a>
+        <a href="https://www.linkedin.com/in/leandramontoya/" target="_blank">
+          <img style='width:7rem' src="https://img.shields.io/badge/linkedin%20-%230077B5.svg?&style=for-the-badge&logo=linkedin&logoColor=white"/>
+        </a>
+        </div>
+      </div>
+    </td>
+    <td align='center'>
+      <div >
+        <h4 style="margin-top: 1rem;">Triana Soler Martín</h4>
+        <div style='display: flex; flex-direction: column'>
+        <a href="https://github.com/TrianaSolerMartin" target="_blank">
+          <img style='width:7rem' src="https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white"/>
+        </a>
+        <a href="https://www.linkedin.com/in/triana-soler-martín" target="_blank">
+          <img style='width:7rem' src="https://img.shields.io/badge/linkedin%20-%230077B5.svg?&style=for-the-badge&logo=linkedin&logoColor=white"/>
+        </a>
+        </div>
+      </div>
+    </td>
+    <td align='center'>
+      <div >
+        <h4 style="margin-top: 1rem;">Scarlet Gonzalez García</h4>
+        <div style='display: flex; flex-direction: column'>
+        <a href="https://github.com/Scarlat2902/Scarlat2902" target="_blank">
+          <img style='width:7rem' src="https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white"/>
+        </a>
+        <a href="https://www.linkedin.com/in/scarlet-gonzalez-garcia/" target="_blank">
+          <img style='width:7rem' src="https://img.shields.io/badge/linkedin%20-%230077B5.svg?&style=for-the-badge&logo=linkedin&logoColor=white"/>
+        </a>
+        </div>
+      </div>
+    </td>
+    <td align='center'>
+      <div >
+        <h4 style="margin-top: 1rem;">Sandra Esteban López</h4>
+        <div style='display: flex; flex-direction: column'>
+        <a href="https://github.com/sandraEstlo" target="_blank">
+          <img style='width:7rem' src="https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white"/>
+        </a>
+        <a href="https://www.linkedin.com/in/sandra-esteban-lopez/" target="_blank">
+          <img style='width:7rem' src="https://img.shields.io/badge/linkedin%20-%230077B5.svg?&style=for-the-badge&logo=linkedin&logoColor=white"/>
+        </a>
+        </div>
+      </div>
+    </td>
+    <td align='center'>
+      <div >
+        <h4 style="margin-top: 1rem;">Maria Andrea An</h4>
+        <div style='display: flex; flex-direction: column'>
+        <a href="https://github.com/mariandrean" target="_blank">
+          <img style='width:7rem' src="https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white"/>
+        </a>
+        <a href="https://www.linkedin.com/in/mariandrean/" target="_blank">
+          <img style='width:7rem' src="https://img.shields.io/badge/linkedin%20-%230077B5.svg?&style=for-the-badge&logo=linkedin&logoColor=white"/>
+        </a>
+        </div>
+      </div>
+    </td>
+  </tr>
+</table>
+</details>
+<!-- END OF TEAM -->
