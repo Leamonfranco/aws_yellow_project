@@ -5,7 +5,7 @@
 + [Configuraciones](#configuraciones)
 + [Integrantes del Equipo](#integrantes-del-equipo)
 
-## Descripción del Proyecto
+## Descripción del Proyecto 
 Realización del despliegue de una aplicación web con alta disponibilidad en AWS. El objetivo principal es garantizar que la web del cliente permanezca accesible incluso si una zona de disponibilidad de AWS falla.
 ## Servicios utilizados
 - AWS CloudFormation
