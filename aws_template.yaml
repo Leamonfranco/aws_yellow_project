@@ -316,6 +316,7 @@ Resources:
 # Outputs
 ###########
 
+
 Outputs:
   LoadBalancerDNS:
     Description: DNS Name of the load balancer
